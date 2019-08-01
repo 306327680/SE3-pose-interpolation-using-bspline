@@ -12,6 +12,7 @@
 #include "sophus/so3.h"
 #include "sophus/se3.h"
 
+#include <pcl/common/transforms.h>
 using std::cout;
 using std::endl;
 
@@ -27,7 +28,7 @@ public:
 	void test();
 private:
 	Sophus::SE3 t1,t2,t3,t4;
-	pcl::PointCloud<pcl::PointXYZI> after;
+	pcl::PointCloud<pcl::PointXYZI> after,pose,temp,out,cp_in,cp_out,cp_save;
 protected:
 
 };
@@ -73,7 +74,7 @@ void SplineFusion::test() {
 	Eigen::Isometry3d temp_pose5;
 	Eigen::Isometry3d temp_pose6;
 	Eigen::Isometry3d temp_pose7;
-	pcl::PointXYZI temp1;
+	pcl::PointXYZI temp1,temp2,temp3;
 	temp_pose1.setIdentity();
 	temp_pose1.rotate(Eigen::AngleAxisd(M_PI/4, Eigen::Vector3d(0,0,1)).toRotationMatrix());
 	temp_pose1.translate(Eigen::Vector3d(0,0,0.5));
@@ -103,6 +104,61 @@ void SplineFusion::test() {
 			b(Eigen::AngleAxisd(M_PI, Eigen::Vector3d(0,0,1)).toRotationMatrix(),Eigen::Vector3d(1,2,1));
 	cout<<"curr: a->b:"<<endl<<fromAtoB(a,b)<<endl;
 	int intens = 0;
+	temp2.y = 0;
+	temp2.z = 0;
+	for (double j = 0; j < 100; ++j) {
+		temp2.x = j/100.0;
+		temp2.y = 0;
+		temp2.z = 0;
+		temp2.intensity = 1;
+		temp.push_back(temp2);
+	}
+	for (double j = 0; j < 100; ++j) {
+		temp2.x = 0;
+		temp2.y = j/100.0;
+		temp2.intensity = 2;
+		temp.push_back(temp2);
+	}
+	for (double j = 0; j < 100; ++j) {
+		temp2.x = 0;
+		temp2.y = 0;
+		temp2.z = j/100.0;
+		temp2.intensity = 3;
+		temp.push_back(temp2);
+	}
+	cp_in = temp;
+	pcl::transformPointCloud(cp_in,cp_out,temp_pose1.matrix());
+	for (double j = 0; j < 300; ++j) {
+		cp_save.push_back(cp_out[j]);
+	}
+	pcl::transformPointCloud(cp_in,cp_out,temp_pose2.matrix());
+	for (double j = 0; j < 300; ++j) {
+		cp_save.push_back(cp_out[j]);
+	}
+	pcl::transformPointCloud(cp_in,cp_out,temp_pose3.matrix());
+	for (double j = 0; j < 300; ++j) {
+		cp_save.push_back(cp_out[j]);
+	}
+	pcl::transformPointCloud(cp_in,cp_out,temp_pose4.matrix());
+	for (double j = 0; j < 300; ++j) {
+		cp_save.push_back(cp_out[j]);
+	}
+	pcl::transformPointCloud(cp_in,cp_out,temp_pose5.matrix());
+	for (double j = 0; j < 300; ++j) {
+		cp_save.push_back(cp_out[j]);
+	}
+	pcl::transformPointCloud(cp_in,cp_out,temp_pose6.matrix());
+	for (double j = 0; j < 300; ++j) {
+		cp_save.push_back(cp_out[j]);
+	}
+	pcl::transformPointCloud(cp_in,cp_out,temp_pose7.matrix());
+	for (double j = 0; j < 300; ++j) {
+		cp_save.push_back(cp_out[j]);
+	}
+	pcl::io::savePCDFile("cp_save.pcd",cp_save);
+	
+	
+	
 	for (double i = 0; i < 100; ++i) {
 		Eigen::Isometry3d tf;
 		Eigen::Matrix4d mat;
@@ -114,6 +170,11 @@ void SplineFusion::test() {
 		temp1.z = mat(2,3);
 		temp1.intensity = intens;
 		intens++;
+		pcl::transformPointCloud(temp,out,mat);
+		for (double j = 0; j < 300; ++j) {
+			pose.push_back(out[j]);
+		}
+		
 		after.push_back(temp1);
 	}
 	for (double i = 0; i < 100; ++i) {
@@ -127,6 +188,10 @@ void SplineFusion::test() {
 		temp1.z = mat(2,3);
 		temp1.intensity = intens;
 		intens++;
+		pcl::transformPointCloud(temp,out,mat);
+		for (double j = 0; j < 300; ++j) {
+			pose.push_back(out[j]);
+		}
 		after.push_back(temp1);
 	}
 	for (double i = 0; i < 100; ++i) {
@@ -140,6 +205,10 @@ void SplineFusion::test() {
 		temp1.z = mat(2,3);
 		temp1.intensity = intens;
 		intens++;
+		pcl::transformPointCloud(temp,out,mat);
+		for (double j = 0; j < 300; ++j) {
+			pose.push_back(out[j]);
+		}
 		after.push_back(temp1);
 	}
 	for (double i = 0; i < 100; ++i) {
@@ -151,12 +220,17 @@ void SplineFusion::test() {
 		temp1.x = mat(0,3);
 		temp1.y = mat(1,3);
 		temp1.z = mat(2,3);
+		pcl::transformPointCloud(temp,out,mat);
+		for (double j = 0; j < 300; ++j) {
+			pose.push_back(out[j]);
+		}
 		temp1.intensity = intens;
 		intens++;
 		after.push_back(temp1);
 	}
 
 	pcl::io::savePCDFile("temp1.pcd",after);
+	pcl::io::savePCDFile("pose.pcd",pose);
 }
 
 
