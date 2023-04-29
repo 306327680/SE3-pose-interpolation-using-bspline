@@ -1,16 +1,14 @@
 #include <iostream>
-#include"cv.h"
+
 #include"cxcore.h"
-#include"highgui.h"
-#include<cstdio>
+
 #include<cmath>
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 #include <iostream>
-#include "sophus/so3.h"
-#include "sophus/se3.h"
+#include <sophus/se3.hpp>
 
 #include <pcl/common/transforms.h>
 using std::cout;
@@ -19,15 +17,14 @@ using std::endl;
 class SplineFusion{
 public:
 	SplineFusion() = default;
-	//??23???
 	Eigen::Isometry3d cumulativeForm(Eigen::Isometry3d T_1,Eigen::Isometry3d T_2,
 									 Eigen::Isometry3d T_3,Eigen::Isometry3d T_4, double u);
 	double getUt(double t, double ti, double dt){return (t-ti)/dt;};
-	Sophus::SE3 fromAtoB(Sophus::SE3 a,Sophus::SE3 b);
-	void SE3Eigen2Sophus(Eigen::Isometry3d e,Sophus::SE3 & s);
+	Sophus::SE3d fromAtoB(Sophus::SE3d a,Sophus::SE3d b);
+	void SE3Eigen2Sophus(Eigen::Isometry3d e,Sophus::SE3d & s);
 	void test();
 private:
-	Sophus::SE3 t1,t2,t3,t4;
+	Sophus::SE3d t1,t2,t3,t4;
 	pcl::PointCloud<pcl::PointXYZI> after,pose,temp,out,cp_in,cp_out,cp_save;
 protected:
 
@@ -37,31 +34,31 @@ protected:
 Eigen::Isometry3d SplineFusion::cumulativeForm(Eigen::Isometry3d T_1,Eigen::Isometry3d T_2,
 											   Eigen::Isometry3d T_3,Eigen::Isometry3d T_4, double u) {
 	Eigen::Isometry3d result = Eigen::Isometry3d::Identity();
-	Sophus::SE3 cur;
+	Sophus::SE3d cur;
 	SE3Eigen2Sophus(T_1,t1);
 	SE3Eigen2Sophus(T_2,t2);
 	SE3Eigen2Sophus(T_3,t3);
 	SE3Eigen2Sophus(T_4,t4);
-	cur =   Sophus::SE3::exp(t1.log())*
-			Sophus::SE3::exp(((5 + 3*u - 3*u*u + u*u*u) / 6)*fromAtoB(t1,t2).log())*
-			Sophus::SE3::exp(((1 + 3*u + 3*u*u - 2*u*u*u) / 6)*fromAtoB(t2,t3).log())*
-		    Sophus::SE3::exp(((u*u*u)/6)*fromAtoB(t3,t4).log());
+	cur =   Sophus::SE3d::exp(t1.log())*
+			Sophus::SE3d::exp(((5 + 3*u - 3*u*u + u*u*u) / 6)*fromAtoB(t1,t2).log())*
+			Sophus::SE3d::exp(((1 + 3*u + 3*u*u - 2*u*u*u) / 6)*fromAtoB(t2,t3).log())*
+		    Sophus::SE3d::exp(((u*u*u)/6)*fromAtoB(t3,t4).log());
 	result = cur.matrix();
 	return result;
 	
 }
 
-void SplineFusion::SE3Eigen2Sophus(Eigen::Isometry3d e, Sophus::SE3 & s) {
-	Sophus::SE3 t1;
+void SplineFusion::SE3Eigen2Sophus(Eigen::Isometry3d e, Sophus::SE3d & s) {
+	Sophus::SE3d t1;
 	Eigen::Matrix4d temp;
 	temp = e.matrix();
 	Eigen::Vector3d t(temp(0,3),temp(1,3),temp(2,3));
-	t1 = Sophus::SE3(e.rotation(),t);
+	t1 = Sophus::SE3d(e.rotation(),t);
 	s = t1;
 }
 
-Sophus::SE3 SplineFusion::fromAtoB(Sophus::SE3 a, Sophus::SE3 b) {
-	return Sophus::SE3(a.inverse()*b);
+Sophus::SE3d SplineFusion::fromAtoB(Sophus::SE3d a, Sophus::SE3d b) {
+	return Sophus::SE3d(a.inverse()*b);
 }
 
 void SplineFusion::test() {
@@ -100,9 +97,9 @@ void SplineFusion::test() {
 	temp_pose7.setIdentity();
 	temp_pose7.rotate(Eigen::AngleAxisd(M_PI/4, Eigen::Vector3d(0.4,0,1)).toRotationMatrix());
 	temp_pose7.translate(Eigen::Vector3d(1,1.5,3.7));
-	Sophus::SE3 a(Eigen::AngleAxisd(0, Eigen::Vector3d(0,0,1)).toRotationMatrix(),Eigen::Vector3d(0,0,0)),
+	Sophus::SE3d a(Eigen::AngleAxisd(0, Eigen::Vector3d(0,0,1)).toRotationMatrix(),Eigen::Vector3d(0,0,0)),
 			b(Eigen::AngleAxisd(M_PI, Eigen::Vector3d(0,0,1)).toRotationMatrix(),Eigen::Vector3d(1,2,1));
-	cout<<"curr: a->b:"<<endl<<fromAtoB(a,b)<<endl;
+	//cout<<"curr: a->b:"<<endl<<fromAtoB(a,b)<<endl;
 	int intens = 0;
 	temp2.y = 0;
 	temp2.z = 0;
