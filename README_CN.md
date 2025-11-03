@@ -225,20 +225,6 @@ B₃(u) = u³ / 6
 
 欢迎贡献！请随时提交Pull Request。
 
-## 引用
-
-如果您在研究中使用此代码，请引用：
-
-```bibtex
-@misc{se3-bspline-interpolation,
-  author = {Your Name},
-  title = {SE(3) Pose Interpolation using B-Spline},
-  year = {2024},
-  publisher = {GitHub},
-  url = {https://github.com/yourusername/SE3-pose-interpolation-using-bspline}
-}
-```
-
 ## 联系方式
 
 如有问题或疑问，请在GitHub上提issue。

@@ -225,20 +225,6 @@ This project is provided as-is for research and educational purposes.
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Citation
-
-If you use this code in your research, please cite:
-
-```bibtex
-@misc{se3-bspline-interpolation,
-  author = {Your Name},
-  title = {SE(3) Pose Interpolation using B-Spline},
-  year = {2024},
-  publisher = {GitHub},
-  url = {https://github.com/yourusername/SE3-pose-interpolation-using-bspline}
-}
-```
-
 ## Contact
 
 For questions or issues, please open an issue on GitHub.
