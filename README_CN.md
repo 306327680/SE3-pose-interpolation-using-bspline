@@ -1,5 +1,7 @@
 # SE(3) 位姿 B样条插值
 
+**[English Version](README.md)** | **中文版**
+
 基于B样条的SE(3)流形位姿插值C++实现，用于连续时间轨迹估计。
 
 ![可视化](pic.png)
@@ -228,7 +230,3 @@ B₃(u) = u³ / 6
 ## 联系方式
 
 如有问题或疑问，请在GitHub上提issue。
-
----
-
-**[English Version](README.md)** | **中文版**

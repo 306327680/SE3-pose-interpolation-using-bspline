@@ -1,5 +1,7 @@
 # SE(3) Pose Interpolation using B-Spline
 
+**English Version** | **[中文版](README_CN.md)**
+
 A C++ implementation of B-spline-based pose interpolation on the SE(3) manifold for continuous-time trajectory estimation.
 
 ![Visualization](pic.png)
@@ -228,7 +230,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## Contact
 
 For questions or issues, please open an issue on GitHub.
-
----
-
-**English Version** | **[中文版](README_CN.md)**
